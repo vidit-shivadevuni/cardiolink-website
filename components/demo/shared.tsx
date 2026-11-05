@@ -71,27 +71,31 @@ function Navigation() {
   return (
     <header className={styles.nav}>
       <Link href="/" className={styles.brand}>
-        <span className={styles.brandMark}>
-          <Icon name="clinician/activity" size={23} />
-        </span>
+        <Icon name="heart-pulse" size={32} />
         CardioLink
       </Link>
       <nav className={styles.navLinks} aria-label="Workspace">
-        <span className={t("w6 green")}>Patients</span>
+        <span className={t("w6")}>Patients</span>
         <span className={t("muted")}>Follow-up</span>
         <span className={t("muted")}>Care team</span>
       </nav>
       <div className={styles.tools}>
-        <span className={styles.demoTag}>
-          <Tag tone="positive">Demo workspace</Tag>
+        <Tag tone="positive">Patient demo</Tag>
+        <span className={styles.toolIcon}>
+          <Icon name="clinician/search" size={20} />
         </span>
-        <Icon name="clinician/search" size={20} />
-        <Icon name="clinician/bell" size={20} />
+        <span className={styles.toolIcon}>
+          <Icon name="clinician/bell" size={20} />
+        </span>
         <Row gap={10}>
           <span className={styles.avatar}>EL</span>
           <span className={`${t("s13")} ${styles.clinicianName}`}>Dr. Elena Lee</span>
         </Row>
       </div>
+      <Link href="/" className={styles.exit}>
+        <span aria-hidden="true">←</span>
+        Exit patient demo
+      </Link>
     </header>
   );
 }
@@ -109,7 +113,7 @@ function PatientContext({ activeTab }: { activeTab: string }) {
           <div className={styles.patientAvatar}>AM</div>
           <Stack gap={3}>
             <Row gap={12} style={{ flexWrap: "wrap" }}>
-              <h1 className={t("s26 w4")}>Alex Morgan</h1>
+              <h1 className={t("s26 w6")}>Alex Morgan</h1>
               <Tag>Fictional demo patient</Tag>
             </Row>
             <p className={t("s13 muted")}>

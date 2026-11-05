@@ -1,18 +1,14 @@
 .page {
-  --ink: #20343b;
-  --muted: #687b82;
-  --green: #16796f;
-  --green-soft: #eaf5f2;
-  --slate: #547d9c;
-  --amber: #b96a22;
+  /* Navy, teal, blue, red, muted and line come from globals.css, shared with the landing page. */
+  --ink: var(--navy);
+  --teal-text: #0f7f78; /* Darker teal so small text stays readable. */
+  --teal-soft: #e7f6f5;
+  --amber: #b96a22; /* Kept only for caution states, which the landing palette doesn't cover. */
   --amber-soft: #fff5e9;
-  --rose: #bc4b4f;
-  --rose-soft: #fceff0;
-  --plum: #8b819c;
-  --line: #dfe7e9;
-  --soft: #f2f5f6;
+  --red-soft: #fdecee;
+  --soft: #f3f5f8;
   min-height: 100vh;
-  background: #f7f9fa;
+  background: #fff;
   color: var(--ink);
   line-height: 1.45;
 }
@@ -34,7 +30,7 @@
 .w7 { font-weight: 700; }
 .ink { color: var(--ink); }
 .muted { color: var(--muted); }
-.green { color: var(--green); }
+.green { color: var(--teal-text); }
 .full { width: 100%; }
 .grow { flex: 1 1 0; min-width: 0; }
 
@@ -42,7 +38,6 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 48px;
   height: 76px;
   padding: 0 40px;
   background: #fff;
@@ -53,25 +48,38 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 21px;
+  font-size: 25px;
   font-weight: 700;
   white-space: nowrap;
 }
 
-.brandMark {
-  display: flex;
+/* The way back to the landing page. */
+.exit {
+  display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
+  gap: 8px;
+  height: 36px;
+  margin-left: 20px;
+  padding: 0 14px;
   border-radius: 8px;
-  background: var(--green);
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.exit:hover {
+  opacity: 0.85;
 }
 
 .navLinks {
   display: flex;
   align-items: center;
   gap: 32px;
+  margin-left: 48px;
   font-size: 14px;
   white-space: nowrap;
 }
@@ -132,9 +140,9 @@
 }
 
 .neutral { background: var(--soft); color: var(--muted); }
-.positive { background: var(--green-soft); color: var(--green); }
+.positive { background: var(--teal-soft); color: var(--teal-text); }
 .caution { background: var(--amber-soft); color: var(--amber); }
-.alert { background: var(--rose-soft); color: var(--rose); }
+.alert { background: var(--red-soft); color: var(--red); }
 
 .action {
   display: inline-flex;
@@ -152,7 +160,7 @@
 }
 
 .actionPrimary {
-  background: var(--green);
+  background: var(--navy);
   box-shadow: none;
   color: #fff;
 }
@@ -160,7 +168,7 @@
 .card {
   border-radius: 12px;
   background: #fff;
-  box-shadow: inset 0 0 0 1px var(--line);
+  box-shadow: inset 0 0 0 1px var(--line), var(--shadow);
 }
 
 .pad24 { padding: 24px; }
@@ -180,7 +188,7 @@
 }
 
 .noteGreen {
-  background: var(--green-soft);
+  background: var(--teal-soft);
 }
 
 /* Patient context */
@@ -192,8 +200,8 @@
   width: 58px;
   height: 58px;
   border-radius: 12px;
-  background: var(--green-soft);
-  color: var(--green);
+  background: var(--teal-soft);
+  color: var(--teal-text);
   font-size: 22px;
   font-weight: 600;
 }
@@ -240,12 +248,12 @@
 }
 
 a.tab:hover {
-  color: var(--green);
+  color: var(--navy);
 }
 
 .tabActive {
-  box-shadow: inset 0 -2px 0 var(--green);
-  color: var(--green);
+  box-shadow: inset 0 -2px 0 var(--teal);
+  color: var(--navy);
 }
 
 .framing {
@@ -449,6 +457,14 @@ a.tab:hover {
 }
 
 /* Below the Figma frame's 1440px width, columns stack and spacing tightens. */
+@media (max-width: 1120px) {
+  /* Makes room for the nav links, demo label and exit button. */
+  .clinicianName,
+  .toolIcon {
+    display: none;
+  }
+}
+
 @media (max-width: 1240px) {
   .reviewRow {
     flex-wrap: wrap;
@@ -480,8 +496,13 @@ a.tab:hover {
 
   .navLinks {
     order: 3;
-    width: 100%;
     gap: 24px;
+    margin-left: 0;
+  }
+
+  .exit {
+    order: 4;
+    margin-left: auto;
   }
 
   .domains {
@@ -499,9 +520,20 @@ a.tab:hover {
     padding: 20px;
   }
 
-  .clinicianName,
-  .demoTag {
-    display: none;
+  .nav {
+    gap: 12px;
+  }
+
+  .navLinks {
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .exit {
+    gap: 6px;
+    height: 32px;
+    padding: 0 10px;
+    font-size: 12px;
   }
 
   .patientRow,

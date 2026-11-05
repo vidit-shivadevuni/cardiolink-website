@@ -6,7 +6,7 @@ const navLinks = [
   { label: "How it works", href: "#how-it-works" },
   { label: "For patients", href: "#for-patients" },
   { label: "FAQs", href: "#faqs" },
-  { label: "Demo", href: "/demo/clinician" },
+  { label: "Patient demo", href: "/demo/clinician" },
 ];
 
 const metrics = [
@@ -150,7 +150,6 @@ export function Hero() {
 
       <div className={styles.hero}>
         <Stack gap={28} className={styles.heroMessage}>
-          <p className={styles.eyebrow}>Team 1 – Cardiology</p>
           <h1 className={styles.heroTitle}>
             <Lines lines={["Connected care.", "Beyond the clinic."]} />
           </h1>

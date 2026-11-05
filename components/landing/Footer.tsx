@@ -39,7 +39,7 @@ export function Footer() {
               <p className={t("s25 w7 white")}>CardioLink</p>
             </Row>
             <p className={t("s14 lh16 white")}>Connected care. Beyond the clinic.</p>
-            <p className={t("s12 white")}>Team 1 – Cardiology · Product concept</p>
+            <p className={t("s12 white")}>Product concept</p>
           </Stack>
           {columns.map((column) => (
             <nav key={column.title} className={styles.footerNav} aria-label={column.title}>
@@ -58,7 +58,7 @@ export function Footer() {
             medical device claim, diagnostic service or emergency monitoring service.
           </p>
           <div className={styles.legalRow}>
-            <p>© 2026 CardioLink · Team 1 – Cardiology</p>
+            <p>© 2026 CardioLink</p>
             {/* These pages don't exist yet, so they stay as plain text rather than dead links. */}
             <Row gap={24}>
               <span>Privacy</span>

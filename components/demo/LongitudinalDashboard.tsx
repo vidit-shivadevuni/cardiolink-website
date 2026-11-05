@@ -34,7 +34,7 @@ const gridLevels = [
 
 const guides = [
   { key: "A", left: 280, color: "var(--amber)" },
-  { key: "B", left: 506, color: "var(--rose)" },
+  { key: "B", left: 506, color: "var(--red)" },
   { key: "C", left: 619, color: "var(--amber)" },
 ];
 
@@ -130,7 +130,7 @@ function BloodPressurePlot() {
               alt=""
               style={{ left: 17, top: reading.diaTop }}
             />
-            <span className={t("s11")} style={{ left: 10, top: reading.diaTop + 14, color: "var(--slate)" }}>
+            <span className={t("s11")} style={{ left: 10, top: reading.diaTop + 14, color: "var(--blue)" }}>
               {reading.dia}
             </span>
             <span className={t("s11 muted")} style={{ left: 0, top: 303, whiteSpace: "nowrap" }}>
@@ -148,7 +148,7 @@ export function LongitudinalDashboard() {
     <>
       <Row gap={12} className={`${styles.between} ${styles.wrap}`}>
         <Stack gap={3}>
-          <h2 className={t("s22 w4")}>From snapshot to a trajectory</h2>
+          <h2 className={t("s22 w6")}>From snapshot to a trajectory</h2>
           <p className={t("s13 muted")}>
             Physical and psychological health, viewed together over time.
           </p>
@@ -212,11 +212,11 @@ export function LongitudinalDashboard() {
             </Row>
             <Row gap={20} className={t("s12")} style={{ flexWrap: "wrap" }}>
               <Row gap={6}>
-                <span className={styles.legendSwatch} style={{ background: "var(--green)" }} />
+                <span className={styles.legendSwatch} style={{ background: "var(--teal)" }} />
                 Systolic
               </Row>
               <Row gap={6}>
-                <span className={styles.legendSwatch} style={{ background: "var(--slate)" }} />
+                <span className={styles.legendSwatch} style={{ background: "var(--blue)" }} />
                 Diastolic
               </Row>
               <span className={t("muted")}>Source: home reading</span>

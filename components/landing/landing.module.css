@@ -727,6 +727,12 @@
   }
 }
 
+@media (max-width: 1000px) {
+  .navLinks {
+    gap: 14px;
+  }
+}
+
 @media (max-width: 900px) {
   /* The nav links move to their own row, which scrolls only on very narrow phones. */
   .nav {

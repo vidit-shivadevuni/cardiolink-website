@@ -74,33 +74,33 @@ const radarLayers = [
 const radarLabels: { text: string; color: string; style: CSSProperties }[] = [
   {
     text: "Blood pressure",
-    color: "var(--green)",
+    color: "var(--teal-text)",
     style: { left: 200, top: 15, width: 120, textAlign: "center" },
   },
-  { text: "Heart rhythm", color: "var(--green)", style: { left: 411, top: 93, width: 100 } },
-  { text: "Anxiety", color: "var(--slate)", style: { left: 411, top: 235, width: 100 } },
+  { text: "Heart rhythm", color: "var(--teal-text)", style: { left: 411, top: 93, width: 100 } },
+  { text: "Anxiety", color: "var(--blue)", style: { left: 411, top: 235, width: 100 } },
   {
     text: "Perceived stress",
-    color: "var(--slate)",
+    color: "var(--blue)",
     style: { left: 200, top: 319, width: 120, textAlign: "center" },
   },
   {
     text: "Childhood adversity",
-    color: "var(--plum)",
+    color: "var(--navy)",
     style: { left: 2, top: 230, width: 100, textAlign: "right" },
   },
   {
     text: "Early environment",
-    color: "var(--plum)",
+    color: "var(--navy)",
     style: { left: 0, top: 88, width: 100, textAlign: "right" },
   },
 ];
 
 const profileDomains = [
-  { color: "var(--green)", title: "Somatic status", source: "Clinical record + home readings" },
-  { color: "var(--plum)", title: "Psychological past", source: "Patient-reported history" },
+  { color: "var(--teal)", title: "Somatic status", source: "Clinical record + home readings" },
+  { color: "var(--navy)", title: "Psychological past", source: "Patient-reported history" },
   {
-    color: "var(--slate)",
+    color: "var(--blue)",
     title: "Current psychological status",
     source: "Patient-reported symptoms",
   },
@@ -125,7 +125,7 @@ function AssessmentCard({ assessment }: { assessment: Assessment }) {
   return (
     <Stack gap={12} className={`${styles.card} ${styles.pad18} ${styles.assessment}`}>
       <Row className={styles.between}>
-        <h4 className={t("s20 w4")}>{assessment.code}</h4>
+        <h4 className={t("s20 w6")}>{assessment.code}</h4>
         <Tag tone={assessment.pending ? "positive" : "neutral"}>
           {assessment.pending ? "Pending" : "Not assessed"}
         </Tag>
@@ -180,7 +180,7 @@ export function ClinicalData() {
     <>
       <Row gap={12} className={`${styles.between} ${styles.wrap}`}>
         <Stack gap={3}>
-          <h2 className={t("s22 w4")}>From data to a profile</h2>
+          <h2 className={t("s22 w6")}>From data to a profile</h2>
           <p className={t("s13 muted")}>
             Keep measured results, reported experience and conceptual context distinct.
           </p>
