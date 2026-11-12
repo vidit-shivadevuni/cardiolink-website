@@ -1,17 +1,15 @@
 "use client";
 
 /**
- * Workspace dialogs: invite patient, add review note, schedule assessment,
- * clinical record and date range. One instance lives in the workspace layout;
- * any page opens one through useWorkspace().openDialog(name).
+ * Workspace dialogs (Figma 13–17): invite patient, add review note, schedule
+ * assessment, clinical record and date range. One instance lives in the
+ * workspace layout; any page opens one through useWorkspace().openDialog(name).
  */
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { DEFAULT_RANGE, useWorkspace } from "./WorkspaceProvider";
 import { Button, Confirmation, Dialog, Field, styles } from "./ui";
-
-const PATIENT_CONTEXT = "Alex Morgan · DEMO-2048 · Fictional patient";
 
 export function WorkspaceDialogs() {
   const { dialog, closeDialog } = useWorkspace();
@@ -42,10 +40,30 @@ function useSubmit() {
   return { state, submit, reset: () => setState("idle") };
 }
 
+function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+  return (
+    <label className={styles.field}>
+      <span className={styles.label}>{label}</span>
+      <select className={styles.input} value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => (
+          <option key={o}>{o}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+const CLINICIANS = ["Dr. Elena Lee", "Dr. Noah Wilson", "Nurse Mina Park"];
+
+/* ------------------------------------------------------------------ */
+/* 13 · Invite patient                                                 */
+/* ------------------------------------------------------------------ */
+
 function InviteDialog({ open, onClose }: Props) {
   const { state, submit, reset } = useSubmit();
-  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [clinician, setClinician] = useState(CLINICIANS[0]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
 
@@ -65,7 +83,7 @@ function InviteDialog({ open, onClose }: Props) {
   };
 
   return (
-    <Dialog open={open} onClose={close} title="Invite patient" context="Fictional patient · Illustrative data">
+    <Dialog open={open} onClose={close} title="Invite patient" context="Patients join only through a secure care-team invitation.">
       {state === "done" ? (
         <Confirmation
           title="Invitation sent"
@@ -80,8 +98,8 @@ function InviteDialog({ open, onClose }: Props) {
             </Button>
           }
         >
-          A secure invitation has been sent to {email}. The link expires in 7 days. The patient creates their own
-          password, and their account stays linked to your care team.
+          A secure invitation has been sent to {email}. The link expires after 7 days, and {name.trim()} will be linked to{" "}
+          {clinician} once they create an account.
         </Confirmation>
       ) : (
         <form className={styles.stack16} onSubmit={onSubmit} noValidate>
@@ -93,17 +111,10 @@ function InviteDialog({ open, onClose }: Props) {
             onChange={(e) => setEmail(e.target.value)}
             error={errors.email}
             placeholder="alex.morgan@example.test"
-            hint="The invitation link is single-use."
+            hint="Check the address before sending."
           />
-          <label className={styles.field}>
-            <span className={styles.label}>Assigned clinician</span>
-            <select className={styles.input} defaultValue="Dr. Elena Lee">
-              <option>Dr. Elena Lee</option>
-              <option>Dr. Noah Wilson</option>
-              <option>Nurse Mina Park</option>
-            </select>
-          </label>
-          <p className={styles.muted11}>Patient accounts are invite-only. Patients only see their own shared records.</p>
+          <Select label="Assigned clinician" value={clinician} onChange={setClinician} options={CLINICIANS} />
+          <p className={styles.muted11}>The invite expires after 7 days. No clinical information is included in the email.</p>
           <div className={styles.dialogActions}>
             <Button variant="secondary" onClick={close}>
               Cancel
@@ -118,9 +129,20 @@ function InviteDialog({ open, onClose }: Props) {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* 14 · Add review note                                                */
+/* ------------------------------------------------------------------ */
+
+const REVIEW_TYPES = ["BP trend review", "Medication–allergy review", "Alcohol-use review", "General note"];
+const NOTE_LIMIT = 2000;
+
 function ReviewNoteDialog({ open, onClose }: Props) {
   const { state, submit, reset } = useSubmit();
+  const { markReviewed, reviews } = useWorkspace();
+  const [type, setType] = useState(REVIEW_TYPES[0]);
   const [note, setNote] = useState("");
+  const [visibility, setVisibility] = useState("Care team only");
+  const [markBp, setMarkBp] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -129,10 +151,11 @@ function ReviewNoteDialog({ open, onClose }: Props) {
     reset();
     setError("");
     setNote("");
+    setMarkBp(false);
   };
 
   return (
-    <Dialog open={open} onClose={close} title="Add review note" context={PATIENT_CONTEXT}>
+    <Dialog open={open} onClose={close} title="Add review note" context="Alex Morgan · DEMO-2048 · Illustrative patient">
       {state === "done" ? (
         <Confirmation
           title="Review note saved"
@@ -147,8 +170,8 @@ function ReviewNoteDialog({ open, onClose }: Props) {
             </Button>
           }
         >
-          Your note is recorded for Alex Morgan with care-team-only visibility. It will not appear in the patient
-          portal. Recorded by Dr. Elena Lee.
+          Your note is recorded for Alex Morgan with {visibility.toLowerCase()} visibility. Recorded by Dr. Elena Lee.
+          {markBp ? " BP trend rising is marked as reviewed." : ""}
         </Confirmation>
       ) : (
         <form
@@ -156,34 +179,36 @@ function ReviewNoteDialog({ open, onClose }: Props) {
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
-            if (!note.trim()) return setError("Enter a review note before saving.");
-            submit();
+            if (!note.trim()) return setError("Enter a clinical review note before saving.");
+            submit(() => {
+              if (markBp) markReviewed("bp-trend", "Follow-up arranged", note.trim());
+            });
           }}
         >
+          <Select label="Review type" value={type} onChange={setType} options={REVIEW_TYPES} />
           <Field
-            label="Review note"
+            label="Clinical review note"
             multiline
             value={note}
+            maxLength={NOTE_LIMIT}
             onChange={(e) => setNote((e.target as unknown as HTMLTextAreaElement).value)}
             error={error}
-            placeholder="Confirm technique and discuss reported reaction."
+            hint={`${note.length.toLocaleString()} / ${NOTE_LIMIT.toLocaleString()} characters`}
+            placeholder="BP trend reviewed alongside patient-reported context. Arrange follow-up to confirm readings and discuss the reported medication reaction."
           />
-          <label className={styles.field}>
-            <span className={styles.label}>Related item</span>
-            <select className={styles.input} defaultValue="BP trend rising">
-              <option>BP trend rising</option>
-              <option>Possible medication–allergy conflict</option>
-              <option>Alcohol-use pattern increasing</option>
-              <option>General note</option>
-            </select>
-          </label>
-          <p className={styles.muted11}>Visibility: care team only.</p>
+          <Select label="Visibility" value={visibility} onChange={setVisibility} options={["Care team only", "Shared with patient"]} />
+          {!reviews["bp-trend"] && (
+            <label className={styles.checkbox} style={{ border: 0, padding: 0 }}>
+              <input type="checkbox" checked={markBp} onChange={(e) => setMarkBp(e.target.checked)} />
+              <span>Mark BP trend rising as reviewed after saving</span>
+            </label>
+          )}
           <div className={styles.dialogActions}>
             <Button variant="secondary" onClick={close}>
               Cancel
             </Button>
             <Button type="submit" disabled={state === "sending"}>
-              {state === "sending" ? "Saving…" : "Save note"}
+              {state === "sending" ? "Saving…" : "Save review note"}
             </Button>
           </div>
         </form>
@@ -192,16 +217,20 @@ function ReviewNoteDialog({ open, onClose }: Props) {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* 15 · Schedule assessment                                            */
+/* ------------------------------------------------------------------ */
+
+const ASSESSMENTS = ["PHQ-9 and GAD-7", "PHQ-9 only", "GAD-7 only"];
+
 function ScheduleDialog({ open, onClose }: Props) {
   const { state, submit, reset } = useSubmit();
-  const [phq, setPhq] = useState(true);
-  const [gad, setGad] = useState(true);
+  const [assessment, setAssessment] = useState(ASSESSMENTS[0]);
   const [due, setDue] = useState("2026-10-16");
+  const [reviewer, setReviewer] = useState(CLINICIANS[0]);
+  const [notify, setNotify] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
-
-  const chosen = [phq && "PHQ-9", gad && "GAD-7"].filter(Boolean).join(" and ");
-  const dueLabel = new Date(`${due}T12:00`).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
   const close = () => {
     onClose();
@@ -209,8 +238,11 @@ function ScheduleDialog({ open, onClose }: Props) {
     setError("");
   };
 
+  const plural = assessment.includes(" and ");
+  const name = assessment.replace(" only", "");
+
   return (
-    <Dialog open={open} onClose={close} title="Schedule assessment" context={PATIENT_CONTEXT}>
+    <Dialog open={open} onClose={close} title="Schedule assessment" context="Alex Morgan · Choose an assessment and due date.">
       {state === "done" ? (
         <Confirmation
           title="Assessment scheduled"
@@ -225,8 +257,9 @@ function ScheduleDialog({ open, onClose }: Props) {
             </Button>
           }
         >
-          {chosen} {chosen.includes("and") ? "are" : "is"} due {dueLabel}. Alex Morgan has been notified in the patient
-          portal.
+          {name} {plural ? "are" : "is"} due {formatDate(due)}.{" "}
+          {notify ? "Alex Morgan has been notified in the patient portal." : "Alex Morgan was not notified."} {reviewer} will
+          review the {plural ? "results" : "result"}.
         </Confirmation>
       ) : (
         <form
@@ -234,31 +267,20 @@ function ScheduleDialog({ open, onClose }: Props) {
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
-            if (!phq && !gad) return setError("Choose at least one questionnaire.");
             if (!due) return setError("Choose a due date.");
+            if (due < "2026-10-14") return setError("Choose a date from today onwards.");
+            setError("");
             submit();
           }}
         >
-          <fieldset className={styles.stack8} style={{ border: 0, padding: 0, margin: 0 }}>
-            <legend className={styles.label} style={{ marginBottom: 8 }}>
-              Questionnaires
-            </legend>
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={phq} onChange={(e) => setPhq(e.target.checked)} />
-              <span>
-                <strong>PHQ-9</strong> · 9 questions · Past 2 weeks
-              </span>
-            </label>
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={gad} onChange={(e) => setGad(e.target.checked)} />
-              <span>
-                <strong>GAD-7</strong> · 7 questions · Past 2 weeks
-              </span>
-            </label>
-          </fieldset>
-          <Field label="Due date" type="date" value={due} min="2026-10-14" onChange={(e) => setDue(e.target.value)} />
-          {error && <p className={styles.error}>{error}</p>}
-          <p className={styles.muted11}>Scores are screening information, not a diagnosis.</p>
+          <Select label="Assessment" value={assessment} onChange={setAssessment} options={ASSESSMENTS} />
+          <Field label="Due date" type="date" value={due} min="2026-10-14" onChange={(e) => setDue(e.target.value)} error={error} />
+          <Select label="Assign reviewer" value={reviewer} onChange={setReviewer} options={CLINICIANS} />
+          <label className={styles.checkbox} style={{ border: 0, padding: 0 }}>
+            <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} />
+            <span>Notify patient in the portal</span>
+          </label>
+          <p className={styles.muted11}>The patient can complete each questionnaire independently. A submission is not a diagnosis.</p>
           <div className={styles.dialogActions}>
             <Button variant="secondary" onClick={close}>
               Cancel
@@ -273,85 +295,208 @@ function ScheduleDialog({ open, onClose }: Props) {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* 16 · Clinical record                                                */
+/* ------------------------------------------------------------------ */
+
 function ClinicalRecordDialog({ open, onClose }: Props) {
   return (
-    <Dialog open={open} onClose={onClose} title="Clinical record" context={PATIENT_CONTEXT} wide>
-      <dl className={styles.recordGrid}>
-        <dt>Conditions</dt>
-        <dd>Hypertension · Atrial fibrillation</dd>
-        <dt>Medications</dt>
-        <dd>Illustrative antihypertensive · Illustrative anticoagulant</dd>
-        <dt>Allergies</dt>
-        <dd>Penicillin (rash) · recorded 2019</dd>
-        <dt>Lifestyle</dt>
-        <dd>Regular alcohol use · Sleep disturbance (patient reported)</dd>
-        <dt>Last visit</dt>
-        <dd>Cardiology visit · 12 Oct 2026 · Dr. Elena Lee</dd>
-        <dt>Source</dt>
-        <dd>Clinical record DEMO-2048 · Updated 12 Oct 2026, 15:20</dd>
-      </dl>
-      <p className={styles.muted11}>
-        Fictional record for illustration only. Medication names are placeholders and must not be used for clinical
-        decisions.
-      </p>
-      <div className={styles.dialogActions}>
-        <Button onClick={onClose}>Close</Button>
+    <Dialog open={open} onClose={onClose} title="Clinical record" context="Alex Morgan · DEMO-2048 · Fictional patient / Illustrative record" wide>
+      <div className={`${styles.cardFlat} ${styles.stack4}`}>
+        <h3 className={styles.h3}>Cardiology visit summary</h3>
+        <p className={styles.muted11}>12 Oct 2026 · Dr. Elena Lee · Record CR-DEMO-012</p>
+        <p className={styles.muted11} style={{ color: "var(--blue)" }}>
+          Clinical record · Read only
+        </p>
+      </div>
+      <div className={styles.stack8}>
+        <h3 className={styles.h3}>Reason for review</h3>
+        <p style={{ fontSize: 13 }}>Review of home blood pressure trend and patient-reported symptoms.</p>
+      </div>
+      <div className={styles.stack8}>
+        <h3 className={styles.h3}>Recorded history</h3>
+        <p style={{ fontSize: 13 }}>
+          Hypertension; atrial fibrillation. Patient-reported medication reaction remains unconfirmed and requires
+          reconciliation.
+        </p>
+      </div>
+      <div className={styles.stack8}>
+        <h3 className={styles.h3}>Plan</h3>
+        <p style={{ fontSize: 13 }}>
+          Discuss home reading technique and review the reported reaction with the patient. No medication changes are
+          specified in this illustrative record.
+        </p>
+      </div>
+      <div className={styles.stack4}>
+        <p className={styles.muted11}>Source: clinical record · Updated 12 Oct 2026</p>
+        <p className={styles.muted11}>Access is logged. Record is not editable from this view.</p>
+      </div>
+      <div>
+        <Button variant="secondary" onClick={onClose}>
+          Close
+        </Button>
       </div>
     </Dialog>
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* 17 · Date range picker                                              */
+/* ------------------------------------------------------------------ */
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const LAST_DAY = DEFAULT_RANGE.end; // Data runs to 14 Oct 2026.
+
+export function formatDate(iso: string) {
+  const [y, m, d] = iso.split("-");
+  return `${d} ${MONTHS[Number(m) - 1]} ${y}`;
+}
+
+function iso(y: number, m: number, d: number) {
+  return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
+function minusDays(isoDate: string, days: number) {
+  const d = new Date(`${isoDate}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+
 const PRESETS = [
-  { label: "2 weeks", start: "2026-09-30" },
-  { label: "6 weeks", start: "2026-09-02" },
-  { label: "3 months", start: "2026-07-14" },
+  { label: "Last 7 days", short: "7 days", start: minusDays(LAST_DAY, 7) },
+  { label: "Last 30 days", short: "30 days", start: minusDays(LAST_DAY, 30) },
+  { label: "Last 6 weeks", short: "6 weeks", start: DEFAULT_RANGE.start },
 ];
 
 function DateRangeDialog({ open, onClose }: Props) {
   const { dateRange, setDateRange } = useWorkspace();
   const [start, setStart] = useState(dateRange.start);
-  const [end, setEnd] = useState(dateRange.end);
+  const [end, setEnd] = useState<string | null>(dateRange.end);
+  const [month, setMonth] = useState({ y: 2026, m: 9 }); // October 2026
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      setStart(dateRange.start);
+      setEnd(dateRange.end);
+      setMonth({ y: 2026, m: 9 });
+      setError("");
+    }
+  }, [open, dateRange]);
+
+  const pick = (day: string) => {
+    if (day > LAST_DAY) return;
+    // First click starts a new range; second click closes it.
+    if (!start || end) {
+      setStart(day);
+      setEnd(null);
+    } else if (day < start) {
+      setEnd(start);
+      setStart(day);
+    } else {
+      setEnd(day);
+    }
+    setError("");
+  };
 
   const apply = (e: FormEvent) => {
     e.preventDefault();
-    if (!start || !end) return setError("Choose a start and end date.");
-    if (start > end) return setError("The start date must be before the end date.");
-    const preset = PRESETS.find((p) => p.start === start && end === DEFAULT_RANGE.end);
-    setDateRange({ label: preset?.label ?? "Custom", start, end });
-    setError("");
+    if (!start || !end) return setError("Select an end date on the calendar.");
+    const preset = PRESETS.find((p) => p.start === start && end === LAST_DAY);
+    setDateRange({ label: preset?.short ?? "Custom", start, end });
     onClose();
   };
 
+  const first = new Date(Date.UTC(month.y, month.m, 1));
+  const offset = (first.getUTCDay() + 6) % 7; // Monday first
+  const daysInMonth = new Date(Date.UTC(month.y, month.m + 1, 0)).getUTCDate();
+  const cells: (number | null)[] = [...Array(offset).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
+
+  const shift = (delta: number) =>
+    setMonth(({ y, m }) => {
+      const n = m + delta;
+      return { y: y + Math.floor(n / 12), m: ((n % 12) + 12) % 12 };
+    });
+
   return (
-    <Dialog open={open} onClose={onClose} title="Date range" context="Alex Morgan · Longitudinal dashboard">
+    <Dialog open={open} onClose={onClose} title="Date range" context="Longitudinal overview · Select the same window for readings and milestones." wide>
       <form className={styles.stack16} onSubmit={apply} noValidate>
-        <div className={styles.row}>
+        <div className={styles.twoCol}>
+          <Field label="Start" value={formatDate(start)} readOnly />
+          <Field label="End" value={end ? formatDate(end) : "Select end date"} readOnly />
+        </div>
+
+        <div className={styles.calendar}>
+          <div className={styles.between}>
+            <h3 className={styles.h3} aria-live="polite">
+              {MONTH_NAMES[month.m]} {month.y}
+            </h3>
+            <div className={styles.row} style={{ gap: 4 }}>
+              <button type="button" className={styles.calNav} onClick={() => shift(-1)} aria-label="Previous month">
+                ‹
+              </button>
+              <button
+                type="button"
+                className={styles.calNav}
+                onClick={() => shift(1)}
+                aria-label="Next month"
+                disabled={iso(month.y, month.m, 1) >= "2026-10-01"}
+              >
+                ›
+              </button>
+            </div>
+          </div>
+          <div className={styles.calGrid} role="grid" aria-label={`${MONTH_NAMES[month.m]} ${month.y}`}>
+            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+              <span key={d} className={styles.calHead}>
+                {d}
+              </span>
+            ))}
+            {cells.map((d, i) => {
+              if (d === null) return <span key={`e${i}`} />;
+              const day = iso(month.y, month.m, d);
+              const inRange = end ? day >= start && day <= end : day === start;
+              const edge = day === start || day === end;
+              return (
+                <button
+                  key={day}
+                  type="button"
+                  className={`${styles.calDay} ${inRange ? styles.calInRange : ""} ${edge ? styles.calEdge : ""}`}
+                  disabled={day > LAST_DAY}
+                  aria-pressed={edge}
+                  aria-label={formatDate(day)}
+                  onClick={() => pick(day)}
+                >
+                  {d}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={styles.row} style={{ gap: 16 }}>
           {PRESETS.map((p) => (
-            <Button
+            <button
               key={p.label}
-              variant="chip"
-              active={start === p.start && end === DEFAULT_RANGE.end}
+              type="button"
+              className={styles.textLink}
               onClick={() => {
                 setStart(p.start);
-                setEnd(DEFAULT_RANGE.end);
+                setEnd(LAST_DAY);
+                setError("");
               }}
             >
               {p.label}
-            </Button>
+            </button>
           ))}
         </div>
-        <div className={styles.twoCol}>
-          <Field label="Start date" type="date" value={start} max={end} onChange={(e) => setStart(e.target.value)} />
-          <Field label="End date" type="date" value={end} min={start} max="2026-10-14" onChange={(e) => setEnd(e.target.value)} />
-        </div>
         {error && <p className={styles.error}>{error}</p>}
-        <p className={styles.muted11}>All times shown in the clinic timezone.</p>
-        <div className={styles.dialogActions}>
+        <div className={styles.dialogActions} style={{ justifyContent: "flex-start" }}>
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit">Apply range</Button>
+          <Button type="submit">Apply date range</Button>
         </div>
       </form>
     </Dialog>

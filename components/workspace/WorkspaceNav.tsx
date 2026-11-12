@@ -85,21 +85,23 @@ function NotificationsPanel({ onClose }: { onClose: () => void }) {
     router.push(href);
   };
 
-  const item = (n: (typeof NOTIFICATIONS)[number]) => (
-    <button
-      key={n.id}
-      type="button"
-      className={styles.notification}
-      style={{ background: "#fff", textAlign: "left", font: "inherit", cursor: "pointer" }}
-      onClick={() => open(n.id, n.href)}
-    >
-      <span className={`${styles.unreadDot} ${readIds.has(n.id) ? styles.readDot : ""}`} aria-hidden="true" />
-      <span className={styles.stack4}>
-        <span style={{ fontWeight: 600, color: "var(--navy)" }}>{n.title}</span>
-        <span className={styles.muted11}>{n.detail}</span>
-      </span>
-    </button>
-  );
+  const item = (n: (typeof NOTIFICATIONS)[number]) => {
+    const read = readIds.has(n.id);
+    return (
+      <div key={n.id} className={styles.notification}>
+        <span className={`${styles.unreadDot} ${read ? styles.readDot : ""}`} aria-hidden="true" />
+        <span className={styles.stack4}>
+          <span style={{ fontWeight: 600, color: "var(--navy)" }}>{n.title}</span>
+          <span className={styles.muted11}>
+            {n.detail} · {read ? "Read" : "Unread"}
+          </span>
+          <button type="button" className={styles.textLink} style={{ alignSelf: "flex-start" }} onClick={() => open(n.id, n.href)}>
+            {n.action} <span aria-hidden="true">›</span>
+          </button>
+        </span>
+      </div>
+    );
+  };
 
   return (
     <>

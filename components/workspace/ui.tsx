@@ -175,6 +175,7 @@ export function Dialog({
             </button>
           </div>
           {children}
+          <p className={styles.muted11}>Fictional patient · Illustrative data only</p>
         </div>
       )}
     </dialog>

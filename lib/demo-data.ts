@@ -186,16 +186,46 @@ export const CARE_TEAM = [
 /* Documents and care plan                                             */
 /* ------------------------------------------------------------------ */
 
-export const DOCUMENTS = [
-  { id: "visit-summary", title: "Cardiology visit summary", date: "12 Oct 2026", type: "PDF", visibility: "Shared with patient" },
-  { id: "bp-guidance", title: "Home BP guidance", date: "02 Sep 2026", type: "Care instructions", visibility: "Shared with patient" },
-  { id: "team-note", title: "Care team handover note", date: "14 Oct 2026", type: "Note", visibility: "Care team only" },
+export type DocumentAction = "clinical-record" | "preview";
+
+export const DOCUMENTS: {
+  id: string;
+  title: string;
+  date: string;
+  meta: string;
+  visibility: "Shared with patient" | "Care team only" | "Clinical record";
+  action: { label: string; opens: DocumentAction };
+}[] = [
+  {
+    id: "visit-summary",
+    title: "Cardiology visit summary",
+    date: "12 Oct 2026",
+    meta: "Clinical record · Dr. Elena Lee · PDF, 2 pages",
+    visibility: "Clinical record",
+    action: { label: "View clinical record", opens: "clinical-record" },
+  },
+  {
+    id: "bp-guidance",
+    title: "Home BP guidance",
+    date: "02 Sep 2026",
+    meta: "Care instructions · Shared with patient",
+    visibility: "Shared with patient",
+    action: { label: "View document", opens: "preview" },
+  },
+  {
+    id: "medication-note",
+    title: "Medication review note",
+    date: "30 Sep 2026",
+    meta: "Clinical note · Care team only",
+    visibility: "Care team only",
+    action: { label: "View note", opens: "preview" },
+  },
 ];
 
 export const CARE_PLAN_GOALS = [
-  { title: "Home blood pressure", detail: "Measure twice daily for 7 days before each review · Target below 135/85 mmHg" },
-  { title: "Weekly check-in", detail: "Mood, sleep, symptoms and alcohol use · Every Monday" },
-  { title: "Follow-up conversation", detail: "Discuss sleep, reported reaction and alcohol use · 14 Oct 2026" },
+  { title: "Home readings", detail: "Record blood pressure as discussed with your clinician.", status: "Daily · Active" },
+  { title: "Daily check-in", detail: "Share symptoms, sleep and wellbeing in the patient portal.", status: "Daily · Active" },
+  { title: "Mood and anxiety assessment", detail: "Complete PHQ-9 and GAD-7 by 16 Oct 2026.", status: "Scheduled · Patient portal" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -203,8 +233,36 @@ export const CARE_PLAN_GOALS = [
 /* ------------------------------------------------------------------ */
 
 export const NOTIFICATIONS = [
-  { id: "n1", title: "Alex Morgan · BP trend rising", detail: "New home reading flagged for review · Today 09:42", href: "/workspace/patients/demo-2048/review/bp-trend", unread: true },
-  { id: "n2", title: "Jamie Patel · Follow-up overdue", detail: "Medication follow-up was due 13 Oct", href: "/workspace/follow-up", unread: true },
-  { id: "n3", title: "Robin Chen · Check-in submitted", detail: "Weekly check-in ready for review · 12 Oct 16:10", href: "/workspace/patients/demo-2082", unread: true },
-  { id: "n4", title: "Taylor Brooks · Check-in submitted", detail: "Weekly check-in · On track · 14 Oct 08:20", href: "/workspace/patients/demo-2063", unread: false },
+  {
+    id: "n1",
+    title: "BP trend needs review",
+    detail: "Alex Morgan · 10 minutes ago",
+    action: "Open review detail",
+    href: "/workspace/patients/demo-2048/review/bp-trend",
+    unread: true,
+  },
+  {
+    id: "n2",
+    title: "Assessment submitted",
+    detail: "Robin Chen · 1 hour ago",
+    action: "View clinical data",
+    href: "/workspace/patients/demo-2082",
+    unread: true,
+  },
+  {
+    id: "n3",
+    title: "Review overdue",
+    detail: "Jamie Patel · Today",
+    action: "Go to follow-up",
+    href: "/workspace/follow-up",
+    unread: true,
+  },
+  {
+    id: "n4",
+    title: "Invitation accepted",
+    detail: "Taylor Brooks · Yesterday",
+    action: "Open patient",
+    href: "/workspace/patients/demo-2063",
+    unread: false,
+  },
 ];

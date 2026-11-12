@@ -91,7 +91,7 @@ function SearchResults() {
               <div className={styles.stack4}>
                 <h2 className={styles.h3}>{d.title}</h2>
                 <p className={styles.muted11}>
-                  {DOC_OWNER} · {d.date} · {d.type}
+                  {DOC_OWNER} · {d.date} · {d.meta.split(" · ")[0]}
                 </p>
                 <TextLink href="/workspace/patients/demo-2048/documents">Open document</TextLink>
               </div>

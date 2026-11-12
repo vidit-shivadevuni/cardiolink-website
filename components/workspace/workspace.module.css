@@ -598,8 +598,76 @@ select.input {
 
 .dialogActions {
   display: flex;
-  justify-content: flex-end;
   gap: 12px;
+}
+
+.dialogActions > * {
+  min-width: 140px;
+}
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calNav {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.calNav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.calGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.calHead {
+  padding-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.calDay {
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--navy);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.calDay:hover:not(:disabled) {
+  background: var(--soft);
+}
+
+.calDay:disabled {
+  color: var(--line);
+  cursor: default;
+}
+
+.calInRange {
+  background: var(--teal-soft);
+}
+
+.calEdge {
+  background: var(--navy) !important;
+  color: #fff;
+  font-weight: 600;
 }
 
 .checkbox {
@@ -729,5 +797,36 @@ select.input {
     left: 16px;
     right: 16px;
     width: auto;
+  }
+}
+
+/* ---------- Documents and care plan (Figma 11, 12) ---------- */
+.docList {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.docRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+}
+
+.docRow + .docRow {
+  border-top: 1px solid var(--line);
+}
+
+.planLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .planLayout {
+    grid-template-columns: 1fr;
   }
 }
