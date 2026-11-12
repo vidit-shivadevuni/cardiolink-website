@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Icon, Row, Stack } from "../landing/shared";
+import { ActionButton } from "./Interactive";
 import styles from "./demo.module.css";
 
 export { Icon, Row, Stack, styles };
@@ -59,52 +60,20 @@ const domains = [
   },
 ];
 
-/** Documents and Care plan have no designs yet, so they stay as plain labels. */
 const tabs = [
-  { label: "Longitudinal dashboard", href: "/demo/clinician" },
-  { label: "Clinical data", href: "/demo/clinician/clinical-data" },
-  { label: "Documents" },
-  { label: "Care plan" },
+  { label: "Longitudinal dashboard", href: "/workspace/patients/demo-2048" },
+  { label: "Clinical data", href: "/workspace/patients/demo-2048/clinical-data" },
+  { label: "Documents", href: "/workspace/patients/demo-2048/documents" },
+  { label: "Care plan", href: "/workspace/patients/demo-2048/care-plan" },
 ];
-
-function Navigation() {
-  return (
-    <header className={styles.nav}>
-      <Link href="/" className={styles.brand}>
-        <Icon name="heart-pulse" size={32} />
-        CardioLink
-      </Link>
-      <nav className={styles.navLinks} aria-label="Workspace">
-        <span className={t("w6")}>Patients</span>
-        <span className={t("muted")}>Follow-up</span>
-        <span className={t("muted")}>Care team</span>
-      </nav>
-      <div className={styles.tools}>
-        <Tag tone="positive">Patient demo</Tag>
-        <span className={styles.toolIcon}>
-          <Icon name="clinician/search" size={20} />
-        </span>
-        <span className={styles.toolIcon}>
-          <Icon name="clinician/bell" size={20} />
-        </span>
-        <Row gap={10}>
-          <span className={styles.avatar}>EL</span>
-          <span className={`${t("s13")} ${styles.clinicianName}`}>Dr. Elena Lee</span>
-        </Row>
-      </div>
-      <Link href="/" className={styles.exit}>
-        <span aria-hidden="true">←</span>
-        Exit patient demo
-      </Link>
-    </header>
-  );
-}
 
 function PatientContext({ activeTab }: { activeTab: string }) {
   return (
     <Stack gap={22} className={styles.full}>
       <Row gap={8} className={t("s12")}>
-        <span className={t("muted")}>Patients</span>
+        <Link href="/workspace/patients" className={t("muted")}>
+          Patients
+        </Link>
         <Icon name="clinician/chevron-right" size={12} />
         <span>Alex Morgan</span>
       </Row>
@@ -122,10 +91,12 @@ function PatientContext({ activeTab }: { activeTab: string }) {
           </Stack>
         </Row>
         <Row gap={10} style={{ flexWrap: "wrap" }}>
-          <Action icon="clinician/file-text">Clinical record</Action>
-          <Action icon="clinician/plus" primary>
+          <ActionButton icon="clinician/file-text" dialog="clinical-record">
+            Clinical record
+          </ActionButton>
+          <ActionButton icon="clinician/plus" primary dialog="review-note">
             Add review note
-          </Action>
+          </ActionButton>
         </Row>
       </Row>
       <div className={styles.domains}>
@@ -142,28 +113,22 @@ function PatientContext({ activeTab }: { activeTab: string }) {
         ))}
       </div>
       <nav className={styles.tabs} aria-label="Patient views">
-        {tabs.map((tab) =>
-          tab.href ? (
-            <Link
-              key={tab.label}
-              href={tab.href}
-              className={`${styles.tab} ${tab.label === activeTab ? styles.tabActive : ""}`}
-              aria-current={tab.label === activeTab ? "page" : undefined}
-            >
-              {tab.label}
-            </Link>
-          ) : (
-            <span key={tab.label} className={styles.tab}>
-              {tab.label}
-            </span>
-          ),
-        )}
+        {tabs.map((tab) => (
+          <Link
+            key={tab.label}
+            href={tab.href}
+            className={`${styles.tab} ${tab.label === activeTab ? styles.tabActive : ""}`}
+            aria-current={tab.label === activeTab ? "page" : undefined}
+          >
+            {tab.label}
+          </Link>
+        ))}
       </nav>
     </Stack>
   );
 }
 
-/** The frame shared by both doctor screens: navigation, patient summary, tabs and footer note. */
+/** Patient summary, tabs and footer note shared by the patient views (the workspace layout supplies the navigation). */
 export function ClinicianShell({
   activeTab,
   children,
@@ -172,8 +137,7 @@ export function ClinicianShell({
   children: ReactNode;
 }) {
   return (
-    <div className={styles.page}>
-      <Navigation />
+    <div className={styles.page} style={{ minHeight: 0 }}>
       <main>
         <Stack gap={24} className={styles.workspace}>
           <PatientContext activeTab={activeTab} />

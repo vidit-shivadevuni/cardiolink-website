@@ -1,23 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { Action, Icon, Row, Stack, Tag, styles, t } from "./shared";
-
-const alerts = [
-  {
-    icon: "triangle-alert",
-    title: "BP trend rising",
-    detail: "Home reading · 14 Oct · +24 mmHg systolic since 02 Sep",
-  },
-  {
-    icon: "shield-alert",
-    title: "Possible medication-allergy conflict",
-    detail: "Clinical record + patient reported · reconcile rash / allergy entry",
-  },
-  {
-    icon: "triangle-alert",
-    title: "Alcohol-use pattern increasing",
-    detail: "Patient reported · 16 Sep · confirm pattern at follow-up",
-  },
-];
+import { DateRangeActions, ReviewSignalsCard } from "./Interactive";
+import { Icon, Row, Stack, Tag, styles, t } from "./shared";
 
 const risks = [
   { title: "5-year cardiovascular risk", value: "18" },
@@ -157,22 +140,7 @@ export function LongitudinalDashboard() {
       </Row>
 
       <div className={styles.reviewRow}>
-        <Stack gap={15} className={`${styles.card} ${styles.pad24} ${styles.reviewCard}`}>
-          <Row className={`${styles.between} ${styles.alignTop}`}>
-            <h3 className={t("s16 w6")}>Needs clinical review</h3>
-            <Tag tone="caution">3 open signals</Tag>
-          </Row>
-          {alerts.map((alert) => (
-            <Row key={alert.title} gap={12} className={styles.full}>
-              <Icon name={`clinician/${alert.icon}`} size={19} />
-              <Stack gap={2} className={styles.grow}>
-                <p className={t("s13 w6 full")}>{alert.title}</p>
-                <p className={t("s11 muted full")}>{alert.detail}</p>
-              </Stack>
-              <Icon name="clinician/chevron-right-1" size={16} />
-            </Row>
-          ))}
-        </Stack>
+        <ReviewSignalsCard />
         {risks.map((risk) => (
           <Stack key={risk.title} gap={12} className={`${styles.card} ${styles.pad24} ${styles.riskCard}`}>
             <Row className={styles.between}>
@@ -195,10 +163,7 @@ export function LongitudinalDashboard() {
             <h3 className={t("s18 w6")}>Longitudinal overview</h3>
             <p className={t("s12 muted")}>Readings and life events share one time window.</p>
           </Stack>
-          <Row gap={8} style={{ flexWrap: "wrap" }}>
-            <Action icon="clinician/calendar-days">02 Sep – 14 Oct 2026</Action>
-            <Action>6 weeks</Action>
-          </Row>
+          <DateRangeActions />
         </Row>
         <div className={styles.divider} />
         <div className={styles.trajectory}>

@@ -1,16 +1,6 @@
-import type { Metadata } from "next";
-import { LongitudinalDashboard } from "@/components/demo/LongitudinalDashboard";
-import { ClinicianShell } from "@/components/demo/shared";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Clinician dashboard – Example screen",
-  description: "An example clinician dashboard using a fictional demo patient.",
-};
-
-export default function ClinicianDashboardPage() {
-  return (
-    <ClinicianShell activeTab="Longitudinal dashboard">
-      <LongitudinalDashboard />
-    </ClinicianShell>
-  );
+/** The clinician demo now lives inside the connected workspace. */
+export default function ClinicianDemoRedirect() {
+  redirect("/workspace/patients/demo-2048");
 }

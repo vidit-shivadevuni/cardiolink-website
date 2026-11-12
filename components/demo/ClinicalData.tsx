@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { CSSProperties } from "react";
-import { Action, Icon, Row, Stack, Tag, styles, t } from "./shared";
+import { Icon, Row, Stack, Tag, styles, t } from "./shared";
+import { ActionButton } from "./Interactive";
 
 type Assessment = {
   code: string;
@@ -185,7 +186,9 @@ export function ClinicalData() {
             Keep measured results, reported experience and conceptual context distinct.
           </p>
         </Stack>
-        <Action icon="clinical/calendar-plus">Schedule assessment</Action>
+        <ActionButton icon="clinical/calendar-plus" dialog="schedule">
+          Schedule assessment
+        </ActionButton>
       </Row>
 
       <div className={styles.dataLayout}>
