@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
+import { createElement } from "react";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,7 +20,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.className}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {createElement("elevenlabs-convai", { "agent-id": "agent_4001m762q675e39v6khaw1b347jn" })}
+        <Script src="https://unpkg.com/@elevenlabs/convai-widget-embed" strategy="afterInteractive" />
+      </body>
     </html>
   );
 }
