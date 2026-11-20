@@ -47,25 +47,52 @@ function useFakeRequest() {
   return { busy, run };
 }
 
-export function SignInForm() {
+export function SignInForm({ next }: { next: string }) {
   const router = useRouter();
-  const [email, setEmail] = useState(CLINICIAN.email);
-  const [password, setPassword] = useState("illustrative-demo");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { busy, run } = useFakeRequest();
+  const [formError, setFormError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
-    const next: Record<string, string> = {};
-    if (!EMAIL.test(email)) next.email = "Enter a valid work email.";
-    if (!password) next.password = "Enter your password.";
-    setErrors(next);
-    if (Object.keys(next).length === 0) run(() => router.push("/workspace/patients"));
+    if (busy) return;
+    const fieldErrors: Record<string, string> = {};
+    if (!EMAIL.test(email)) fieldErrors.email = "Enter a valid work email.";
+    if (!password) fieldErrors.password = "Enter your password.";
+    setErrors(fieldErrors);
+    setFormError("");
+    if (Object.keys(fieldErrors).length > 0) return;
+
+    setBusy(true);
+    try {
+      const res = await fetch("/api/auth/sign-in", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (res.ok) {
+        router.replace(next);
+        router.refresh();
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      setFormError(data.error ?? "Sign-in failed. Please try again.");
+    } catch {
+      setFormError("We couldn’t reach the server. Check your connection and try again.");
+    }
+    setBusy(false);
   };
 
   return (
     <form className={ws.stack16} onSubmit={submit} noValidate>
+      {formError && (
+        <p role="alert" className={ws.error} style={{ fontSize: 13 }}>
+          {formError}
+        </p>
+      )}
       <Field label="Work email" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} error={errors.email} />
       <Field
         label="Password"
@@ -84,10 +111,13 @@ export function SignInForm() {
       <Button type="submit" className={styles.full} disabled={busy}>
         {busy ? "Signing in…" : "Sign in"}
       </Button>
-      <p className={ws.muted11}>By signing in you agree to the Terms of service and Privacy notice.</p>
-      <Link href="/account" className={styles.link}>
-        Not a clinician? Switch account type
-      </Link>
+      <p className={ws.muted12}>
+        Demo access is by invitation. Don’t have a login yet?{" "}
+        <Link href="/demo" className={styles.link}>
+          Request a demo
+        </Link>{" "}
+        and our team will set one up for you.
+      </p>
     </form>
   );
 }

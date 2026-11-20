@@ -6,3 +6,6 @@ next-env.d.ts
 .DS_Store
 .env*.local
 .claude/
+
+# Local demo-request submissions (contain names/emails); written by /api/demo-requests
+dev-data/

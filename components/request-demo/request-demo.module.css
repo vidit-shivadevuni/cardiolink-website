@@ -1,0 +1,287 @@
+/* /demo page. Type, colors, radii and buttons come from landing.module.css and globals.css. */
+
+.page {
+  --teal-soft: #e7f6f5;
+  --teal-text: #0f7f78;
+  --red-soft: #fdecee;
+  --soft: #f3f5f8;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+  align-items: start;
+  gap: 80px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 64px 80px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  min-width: 0;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.video,
+.videoPlaceholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  background: var(--navy);
+}
+
+.video {
+  display: block;
+  box-shadow: var(--shadow);
+}
+
+.videoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+}
+
+.playBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--navy);
+  font-size: 20px;
+  padding-left: 4px;
+}
+
+.expectItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.iconTile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--teal-soft);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+}
+
+.statValue {
+  font-size: clamp(26px, 2.4vw, 32px);
+  white-space: nowrap;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--teal);
+}
+
+/* Form card */
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.required {
+  color: var(--red);
+  margin-left: 2px;
+}
+
+/* Matches the text inputs. The shared .input:read-only rule also matches <select>, hence the extra specificity. */
+.page select.select {
+  appearance: none;
+  padding-right: 36px;
+  background: #fff url("/figma/chevron-down.svg") no-repeat right 12px center / 16px 16px;
+  cursor: pointer;
+}
+
+.choiceGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+}
+
+.choice input {
+  margin: 0;
+  accent-color: var(--teal);
+}
+
+.submit {
+  justify-content: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--red-soft);
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.checkBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--teal-soft);
+  color: var(--teal-text);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.reference {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 12px;
+  word-break: break-all;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2s;
+  }
+}
+
+@media (max-width: 1240px) {
+  .layout {
+    gap: 48px;
+    padding: 56px 40px;
+  }
+
+  .title {
+    font-size: clamp(36px, 4vw, 48px);
+  }
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .layout {
+    gap: 40px;
+    padding: 40px 20px;
+  }
+
+  .title {
+    font-size: 34px;
+  }
+
+  .fieldRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stat {
+    padding: 20px 16px;
+  }
+
+  .statValue {
+    font-size: 24px;
+  }
+}

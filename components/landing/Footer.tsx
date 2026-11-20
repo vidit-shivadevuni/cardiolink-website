@@ -4,25 +4,25 @@ const columns = [
   {
     title: "Explore",
     links: [
-      { label: "Why CardioLink", href: "#who-we-support" },
-      { label: "How it works", href: "#how-it-works" },
-      { label: "Clinical integration", href: "#clinical-integration" },
+      { label: "Why CardioLink", href: "/#who-we-support" },
+      { label: "How it works", href: "/#how-it-works" },
+      { label: "Clinical integration", href: "/#clinical-integration" },
     ],
   },
   {
     title: "For you",
     links: [
-      { label: "Care teams", href: "/demo/clinician" },
-      { label: "Organizations", href: "#who-we-support" },
-      { label: "Patients & families", href: "#for-patients" },
+      { label: "Care teams", href: "/demo" },
+      { label: "Organizations", href: "/#who-we-support" },
+      { label: "Patients & families", href: "/#for-patients" },
     ],
   },
   {
     title: "Get in touch",
     links: [
-      { label: "Request a demo", href: "#request-a-demo" },
-      { label: "Questions & answers", href: "#faqs" },
-      { label: "Contact the team", href: "#request-a-demo" },
+      { label: "Request a demo", href: "/demo" },
+      { label: "Questions & answers", href: "/#faqs" },
+      { label: "Contact the team", href: "/demo" },
     ],
   },
 ];

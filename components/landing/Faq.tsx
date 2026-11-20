@@ -68,7 +68,7 @@ export function Faq() {
             Understand the concept, its boundaries and what a thoughtful implementation would
             involve.
           </p>
-          <a href="#request-a-demo" className={styles.textLink}>
+          <a href="/demo" className={styles.textLink}>
             Talk with our team
             <Icon name="arrow-up-right-1" size={18} />
           </a>

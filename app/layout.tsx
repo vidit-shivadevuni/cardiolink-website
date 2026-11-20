@@ -22,7 +22,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={inter.className}>
       <body>
         {children}
-        {createElement("elevenlabs-convai", { "agent-id": "agent_4001m762q675e39v6khaw1b347jn" })}
+        {/* Voice runs in the browser over the mic; it never places a phone call. Text chat is the "Message" button. */}
+        {createElement("elevenlabs-convai", {
+          "agent-id": "agent_4001m762q675e39v6khaw1b347jn",
+          // The current widget reads labels from this JSON; the older *-text attributes are ignored.
+          "text-contents": JSON.stringify({
+            main_label: "Questions? Ask CardioLink",
+            start_call: "Talk by voice",
+            start_chat: "Chat with us",
+            end_call: "End voice chat",
+          }),
+        })}
         <Script src="https://unpkg.com/@elevenlabs/convai-widget-embed" strategy="afterInteractive" />
       </body>
     </html>

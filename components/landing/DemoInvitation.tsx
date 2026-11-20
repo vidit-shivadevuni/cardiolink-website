@@ -14,8 +14,7 @@ export function DemoInvitation() {
           </p>
         </Stack>
         <Stack gap={16} className={styles.demoAction}>
-          {/* The design doesn't specify a destination; replace this href with a form or email link. */}
-          <ButtonLink href="#request-a-demo" variant="inverse" icon="arrow-right-1">
+          <ButtonLink href="/demo" variant="inverse" icon="arrow-right-1">
             Request a demo
           </ButtonLink>
           <p className={t("s12 white")}>A conversation, not a commitment.</p>

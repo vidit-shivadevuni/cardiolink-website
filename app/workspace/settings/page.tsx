@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CLINICIAN } from "@/lib/demo-data";
 import { useWorkspace } from "@/components/workspace/WorkspaceProvider";
 import { Button, Card, Field, PageHeader, TextLink, styles } from "@/components/workspace/ui";
 
 export default function SettingsPage() {
   const { profileName, setProfileName, emailNotifications, setEmailNotifications } = useWorkspace();
+  const router = useRouter();
+  const signOut = async () => {
+    await fetch("/api/auth/sign-out", { method: "POST" }).catch(() => undefined);
+    router.push("/account/signed-out");
+  };
   const [name, setName] = useState(profileName);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -81,7 +87,7 @@ export default function SettingsPage() {
             <div className={styles.stack4}>
               <h3 className={styles.h3}>Session</h3>
               <p className={styles.muted11}>Signed in on this browser</p>
-              <TextLink href="/account/signed-out">Sign out</TextLink>
+              <TextLink onClick={signOut}>Sign out</TextLink>
             </div>
           </div>
           <p className={styles.muted11}>Changes affect your account, not your patients’ care plans.</p>

@@ -1,13 +1,6 @@
 import Link from "next/link";
 import { ButtonLink, Icon, Lines, Row, Stack, styles, t } from "./shared";
-
-const navLinks = [
-  { label: "Why CardioLink", href: "#who-we-support" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "For patients", href: "#for-patients" },
-  { label: "FAQs", href: "#faqs" },
-  { label: "Patient demo", href: "/demo/clinician" },
-];
+import { SiteNav } from "./SiteNav";
 
 const metrics = [
   { value: "24", label: "Enrolled patients", color: "navy" },
@@ -82,8 +75,8 @@ function Dashboard() {
         <Stack className={styles.full}>
           <Row className={`${styles.between} ${styles.top}`}>
             <p className={t("s12 w6 navy")}>Recent readings</p>
-            <Link href="/demo/clinician" className={t("s11 blue")}>
-              View patients ↗
+            <Link href="/demo" className={t("s11 blue")}>
+              Request a demo ↗
             </Link>
           </Row>
           <PatientRow
@@ -129,24 +122,7 @@ function Dashboard() {
 export function Hero() {
   return (
     <header className={styles.heroSection}>
-      <div className={styles.navWrap}>
-        <nav className={styles.nav} aria-label="Main">
-          <a href="#top" id="top" className={styles.brand}>
-            <Icon name="heart-pulse" size={32} />
-            CardioLink
-          </a>
-          <div className={styles.navLinks}>
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <ButtonLink href="#request-a-demo" variant="primary" icon="arrow-right">
-            Request a demo
-          </ButtonLink>
-        </nav>
-      </div>
+      <SiteNav />
 
       <div className={styles.hero}>
         <Stack gap={28} className={styles.heroMessage}>
@@ -158,7 +134,7 @@ export function Hero() {
             care-team review into one thoughtful cardiology workspace.
           </p>
           <div className={styles.heroActions}>
-            <ButtonLink href="#request-a-demo" variant="primary" icon="arrow-right">
+            <ButtonLink href="/demo" variant="primary" icon="arrow-right">
               Request a demo
             </ButtonLink>
             <ButtonLink href="#how-it-works" variant="secondary" icon="arrow-right-1">

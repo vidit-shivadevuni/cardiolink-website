@@ -24,7 +24,7 @@ export function WorkspaceNav() {
   return (
     <>
       <header className={styles.nav}>
-        <Link href="/workspace/patients" className={styles.brand}>
+        <Link href="/" className={styles.brand}>
           CardioLink
         </Link>
         <nav className={styles.navLinks} aria-label="Workspace">
